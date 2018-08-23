@@ -1,7 +1,6 @@
 {
   "definitions": {},
   "$schema": "http://json-schema.org/draft-07/schema#",
-  "$id": "http://example.com/root.json",
   "type": "object",
   "required": [
     "schema",
@@ -24,36 +23,24 @@
               "$id": "#/properties/schema/properties/fields/properties/returns_stock_1",
               "type": "string",
               "default": "",
-              "examples": [
-                "float"
-              ],
               "pattern": "^(.*)$"
             },
             "returns_stock_2": {
               "$id": "#/properties/schema/properties/fields/properties/returns_stock_2",
               "type": "string",
               "default": "",
-              "examples": [
-                "float"
-              ],
               "pattern": "^(.*)$"
             },
             "returns_bond_1": {
               "$id": "#/properties/schema/properties/fields/properties/returns_bond_1",
               "type": "string",
               "default": "",
-              "examples": [
-                "float"
-              ],
               "pattern": "^(.*)$"
             },
             "returns_bond_2": {
               "$id": "#/properties/schema/properties/fields/properties/returns_bond_2",
               "type": "string",
               "default": "",
-              "examples": [
-                "float"
-              ],
               "pattern": "^(.*)$"
             }
           }
@@ -75,9 +62,6 @@
                 "type": "string",
                 "title": "The Name Schema",
                 "default": "",
-                "examples": [
-                  "mutual_fund"
-                ],
                 "pattern": "^(.*)$"
               },
               "priors": {
@@ -96,18 +80,12 @@
                       "$id": "#/properties/schema/properties/formulae/items/properties/priors/items/properties/name",
                       "type": "string",
                       "default": "",
-                      "examples": [
-                        "returns_stock_1"
-                      ],
                       "pattern": "^(.*)$"
                     },
                     "type": {
                       "$id": "#/properties/schema/properties/formulae/items/properties/priors/items/properties/type",
                       "type": "string",
                       "default": "",
-                      "examples": [
-                        "normal"
-                      ],
                       "pattern": "^(.*)$"
                     },
                     "initial": {
@@ -117,18 +95,12 @@
                         "mu": {
                           "$id": "#/properties/schema/properties/formulae/items/properties/priors/items/properties/initial/properties/mu",
                           "type": "integer",
-                          "default": 0,
-                          "examples": [
-                            3
-                          ]
+                          "default": 0
                         },
                         "sd": {
                           "$id": "#/properties/schema/properties/formulae/items/properties/priors/items/properties/initial/properties/sd",
                           "type": "number",
-                          "default": 0.0,
-                          "examples": [
-                            0.4
-                          ]
+                          "default": 0.0
                         }
                       }
                     }
@@ -147,18 +119,12 @@
                     "$id": "#/properties/schema/properties/formulae/items/properties/deterministic/properties/name",
                     "type": "string",
                     "default": "",
-                    "examples": [
-                      "total_returns"
-                    ],
                     "pattern": "^(.*)$"
                   },
                   "formula": {
                     "$id": "#/properties/schema/properties/formulae/items/properties/deterministic/properties/formula",
                     "type": "string",
                     "default": "",
-                    "examples": [
-                      "returns_stock_1 + returns_stock_2 + returns_bond_1 + returns_bond_2"
-                    ],
                     "pattern": "^(.*)$"
                   }
                 }
@@ -174,26 +140,17 @@
               "$id": "#/properties/schema/properties/mcmc_parameters/properties/step",
               "type": "string",
               "default": "",
-              "examples": [
-                "METROPOLIS"
-              ],
               "pattern": "^(.*)$"
             },
             "iterations": {
               "$id": "#/properties/schema/properties/mcmc_parameters/properties/iterations",
               "type": "integer",
-              "default": 0,
-              "examples": [
-                10000
-              ]
+              "default": 0
             },
             "burn_in": {
               "$id": "#/properties/schema/properties/mcmc_parameters/properties/burn_in",
               "type": "integer",
-              "default": 0,
-              "examples": [
-                2000
-              ]
+              "default": 0
             }
           }
         }
@@ -209,34 +166,22 @@
           "returns_stock_1": {
             "$id": "#/properties/data/items/properties/returns_stock_1",
             "type": "number",
-            "default": 0.0,
-            "examples": [
-              8.65856872023955
-            ]
+            "default": 0.0
           },
           "returns_stock_2": {
             "$id": "#/properties/data/items/properties/returns_stock_2",
             "type": "number",
-            "default": 0.0,
-            "examples": [
-              7.487320631684824
-            ]
+            "default": 0.0
           },
           "returns_bond_1": {
             "$id": "#/properties/data/items/properties/returns_bond_1",
             "type": "number",
-            "default": 0.0,
-            "examples": [
-              0.12612438219680042
-            ]
+            "default": 0.0
           },
           "returns_bond_2": {
             "$id": "#/properties/data/items/properties/returns_bond_2",
             "type": "number",
-            "default": 0.0,
-            "examples": [
-              0.3630968533880531
-            ]
+            "default": 0.0
           }
         }
       }
