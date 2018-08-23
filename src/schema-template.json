@@ -4,7 +4,7 @@
       "returns_stock_1": "float",
       "returns_stock_2": "float",
       "returns_bond_1": "float",
-      "returns_bond_2": "float",
+      "returns_bond_2": "float"
     },
     "formulae": [
       {

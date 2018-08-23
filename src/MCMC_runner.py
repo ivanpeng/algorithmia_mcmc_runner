@@ -8,4 +8,8 @@ already correct. It will simply connect to the algorithm set up in Algorithmia a
 # API calls will begin at the apply() method, with the request body passed as 'input'
 # For more details, see algorithmia.com/developers/algorithm-development/languages
 def apply(input):
+
+    # We will take a data input which is a json file with schema and data.
+    # First parse the schema, then call runner on data with appropriate commands.
+
     return "hello {}".format(input)
