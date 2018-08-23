@@ -1,3 +1,6 @@
+[![Build Status](https://travis-ci.org/ivanpeng/algorithmia_mcmc_runner.svg?branch=master)](https://travis-ci.org/ivanpeng/algorithmia_mcmc_runner)
+[![Coverage Status](https://coveralls.io/repos/github/ivanpeng/algorithmia_mcmc_runner/badge.svg?branch=master)](https://coveralls.io/github/ivanpeng/algorithmia_mcmc_runner?branch=master)
+
 ## Introduction ##
 This is a plugin to run a serverless instance of MCMC on Algorithmia. It will accept a json schema, which will declare the data schema, along with what are the observed variables, vs. the deterministic ones. Based on the equation input, it will call PyMC3's MCMC algortithm to simulate distribution of data (read more here: ). The output will be a graph, and the trace which can be utilized to generate information about the distributions.
 
