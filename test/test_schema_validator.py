@@ -1,9 +1,8 @@
 import unittest
 import json
-
 from jsonschema import ValidationError
-
 from src.schema_validator import SchemaValidator
+
 
 class TestSchemaValidator(unittest.TestCase):
 
@@ -24,3 +23,4 @@ class TestSchemaValidator(unittest.TestCase):
             obj = json.load(f)
         validator = SchemaValidator(obj)
         self.assertIsNone(validator.validate())
+        self.assertIsNone(validator._validate_dependencies())

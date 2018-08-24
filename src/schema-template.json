@@ -1,11 +1,20 @@
 {
   "schema": {
-    "fields": {
-      "returns_stock_1": "float",
-      "returns_stock_2": "float",
-      "returns_bond_1": "float",
-      "returns_bond_2": "float"
-    },
+    "fields": [
+      {
+        "name": "returns_stock_1",
+        "type": "float"
+      }, {
+        "name": "returns_stock_2",
+        "type": "float"
+      }, {
+        "name": "returns_bond_1",
+        "type": "float"
+      }, {
+        "name": "returns_bond_2",
+        "type": "float"
+      }
+    ],
     "formulae": [
       {
         "name": "mutual_fund",
@@ -13,34 +22,26 @@
           {
             "name": "returns_stock_1",
             "type": "normal",
-            "initial": {
-              "mu": 3,
-              "sd": 0.4
-            }
+            "mu": 3,
+            "sd": 0.4
           }, {
             "name": "returns_stock_2",
             "type": "normal",
-            "initial": {
-              "mu": 4,
-              "sd": 0.5
-            }
+            "mu": 4,
+            "sd": 0.5
           }, {
             "name": "returns_bond_1",
             "type": "exponential",
-            "initial": {
-              "lam": 2.5
-            }
+            "lam": 2.5
           }, {
             "name": "returns_bond_2",
             "type": "exponential",
-            "initial": {
-              "lam": 4
-            }
+            "lam": 4
           }
         ],
         "deterministic": {
           "name": "total_returns",
-          "formula": "returns_stock_1 + returns_stock_2 + returns_bond_1 + returns_bond_2"
+          "formula": "1.2 * returns_stock_1 + returns_stock_2 + returns_bond_1 + returns_bond_2"
         }
       }
     ],

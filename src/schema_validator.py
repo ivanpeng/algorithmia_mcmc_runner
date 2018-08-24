@@ -1,5 +1,6 @@
 import json
 import jsonschema
+from jsonschema import ValidationError
 
 
 class SchemaValidator:
@@ -16,3 +17,35 @@ class SchemaValidator:
 
     def validate(self):
         return jsonschema.validate(self.schema_obj, self.schema)
+
+    def _validate_dependencies(self):
+        # ValidationError is raised if it fails. We only reach here if it's successful
+        # Now we validate the fields: are the fields present?
+        # First validate if all field names are unique
+        field_names = [x["name"] for x in self.schema_obj["schema"]["fields"]]
+        for field_name in field_names:
+            if " " in field_name:
+                raise ValidationError("Field names for variables must not contain spaces: %s" % field_name)
+        # Validate field names for uniqueness
+        if len(field_names) != len(set(field_names)):
+            raise ValidationError("Field names for variables are not unique: %s" %field_names)
+        field_name_set = set(field_names)
+        for formula in self.schema_obj["schema"]["formulae"]:
+            for prior in formula["priors"]:
+                if prior["name"] not in field_name_set:
+                    raise ValidationError("Prior name does not match field name: %s" % prior["name"])
+                else:
+                    # Need to remove it to prevent it from being called again.
+                    field_name_set.remove(prior["name"])
+            # Validate fields in deterministic
+            # Let's support super simple expressions for now. I would imagine we will need a tokenizer eventually
+            # https://stackoverflow.com/questions/43389684/how-can-i-split-a-string-of-a-mathematical-expressions-in-python
+            equation_arr = formula["deterministic"]["formula"].replace(" ", "").replace("+", " ").replace("-", " ").replace("*", " ").replace("/", " ").split(" ")
+            for e in equation_arr:
+                try:
+                    float(e)
+                except ValueError:
+                    # It isn't a number here, so it should be a variable name. Check if it's in field_names
+                    if e not in field_names:
+                        raise ValidationError("Variable name %s in deterministic equation doesn't exist as field" % e)
+        return None

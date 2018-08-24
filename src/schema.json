@@ -16,32 +16,25 @@
       ],
       "properties": {
         "fields": {
-          "$id": "#/properties/schema/properties/fields",
-          "type": "object",
-          "properties": {
-            "returns_stock_1": {
-              "$id": "#/properties/schema/properties/fields/properties/returns_stock_1",
-              "type": "string",
-              "default": "",
-              "pattern": "^(.*)$"
-            },
-            "returns_stock_2": {
-              "$id": "#/properties/schema/properties/fields/properties/returns_stock_2",
-              "type": "string",
-              "default": "",
-              "pattern": "^(.*)$"
-            },
-            "returns_bond_1": {
-              "$id": "#/properties/schema/properties/fields/properties/returns_bond_1",
-              "type": "string",
-              "default": "",
-              "pattern": "^(.*)$"
-            },
-            "returns_bond_2": {
-              "$id": "#/properties/schema/properties/fields/properties/returns_bond_2",
-              "type": "string",
-              "default": "",
-              "pattern": "^(.*)$"
+          "$id": "#/properties/fields",
+          "type": "array",
+          "items": {
+            "$id": "#/properties/fields/items",
+            "type": "object",
+            "required": [
+              "name",
+              "type"
+            ],
+            "properties": {
+              "name": {
+                "$id": "#/properties/fields/items/properties/name",
+                "type": "string"
+              },
+              "type": {
+                "$id": "#/properties/fields/items/properties/type",
+                "type": "string",
+                "enum": ["int", "posint", "float"]
+              }
             }
           }
         },
@@ -60,7 +53,6 @@
               "name": {
                 "$id": "#/properties/schema/properties/formulae/items/properties/name",
                 "type": "string",
-                "title": "The Name Schema",
                 "default": "",
                 "pattern": "^(.*)$"
               },
@@ -72,8 +64,7 @@
                   "type": "object",
                   "required": [
                     "name",
-                    "type",
-                    "initial"
+                    "type"
                   ],
                   "properties": {
                     "name": {
@@ -85,26 +76,48 @@
                     "type": {
                       "$id": "#/properties/schema/properties/formulae/items/properties/priors/items/properties/type",
                       "type": "string",
-                      "default": "",
-                      "pattern": "^(.*)$"
-                    },
-                    "initial": {
-                      "$id": "#/properties/schema/properties/formulae/items/properties/priors/items/properties/initial",
-                      "type": "object",
-                      "properties": {
-                        "mu": {
-                          "$id": "#/properties/schema/properties/formulae/items/properties/priors/items/properties/initial/properties/mu",
-                          "type": "integer",
-                          "default": 0
-                        },
-                        "sd": {
-                          "$id": "#/properties/schema/properties/formulae/items/properties/priors/items/properties/initial/properties/sd",
-                          "type": "number",
-                          "default": 0.0
+                      "enum": ["normal", "exponential", "poisson", "beta", "bernoulli", "lognormal"]
+                    }
+                  },
+                  "allOf": [
+                    {
+                      "if": {
+                        "properties": {
+                          "type": {"enum": ["normal", "lognormal"]}
                         }
+                      },
+                      "then": {
+                        "required": ["mu", "sd"]
+                      }
+                    }, {
+                      "if": {
+                        "properties": {
+                          "type": {"enum": ["exponential", "poisson"]}
+                        }
+                      },
+                      "then": {
+                        "required": ["lam"]
+                      }
+                    }, {
+                      "if": {
+                        "properties": {
+                          "type": {"enum": ["beta"]}
+                        }
+                      },
+                      "then": {
+                        "required": ["alpha", "beta"]
+                      }
+                    }, {
+                      "if": {
+                        "properties": {
+                          "type": {"enum": ["bernoulli"]}
+                        }
+                      },
+                      "then": {
+                        "required": ["p"]
                       }
                     }
-                  }
+                  ]
                 }
               },
               "deterministic": {
