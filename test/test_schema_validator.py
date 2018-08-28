@@ -24,3 +24,66 @@ class TestSchemaValidator(unittest.TestCase):
         validator = SchemaValidator(obj)
         self.assertIsNone(validator.validate())
         self.assertIsNone(validator._validate_dependencies())
+
+    def test_full_schema_with_duplicate_field_names_fails(self):
+        with open("src/schema-template.json", "r") as f:
+            obj = json.load(f)
+        obj["schema"]["fields"].append({
+            "name": "returns_stock_1",
+            "type": "float"
+        })
+        validator = SchemaValidator(obj)
+        self.assertRaises(ValidationError, validator._validate_dependencies)
+
+    def test_full_schema_with_field_with_space_fails(self):
+        with open("src/schema-template.json", "r") as f:
+            obj = json.load(f)
+        obj["schema"]["fields"].append({
+            "name": "a field name with spaces",
+            "type": "float"
+        })
+        validator = SchemaValidator(obj)
+        self.assertRaises(ValidationError, validator._validate_dependencies)
+
+    def test_full_schema_with_nonexistent_prior_fails(self):
+        with open("src/schema-template.json", "r") as f:
+            obj = json.load(f)
+        obj["schema"]["formulae"][0]["priors"].append({
+            "name": "a_field_which_does_not_exist",
+            "type": "normal",
+            "mu": 3,
+            "sd": 0.4
+        })
+        validator = SchemaValidator(obj)
+        self.assertRaises(ValidationError, validator._validate_dependencies)
+
+    def test_full_schema_with_duplicate_prior_fails(self):
+        with open("src/schema-template.json", "r") as f:
+            obj = json.load(f)
+        obj["schema"]["formulae"][0]["priors"].append({
+            "name": "returns_stock_1",
+            "type": "normal",
+            "mu": 3,
+            "sd": 0.4
+        })
+        validator = SchemaValidator(obj)
+        self.assertRaises(ValidationError, validator._validate_dependencies)
+
+    def test_full_schema_with_non_existent_field_in_deterministic_fails(self):
+        with open("src/schema-template.json", "r") as f:
+            obj = json.load(f)
+        obj["schema"]["formulae"][0]["priors"].append({
+            "name": "a_field_which_does_not_exist",
+            "type": "normal",
+            "mu": 3,
+            "sd": 0.4
+        })
+        validator = SchemaValidator(obj)
+        self.assertRaises(ValidationError, validator._validate_dependencies)
+
+    def test_full_schema_with_unsupported_dist_type_fails(self):
+        with open("src/schema-template.json", "r") as f:
+            obj = json.load(f)
+        obj["schema"]["formulae"][0]["priors"][0]["type"] = "pareto"
+        validator = SchemaValidator(obj)
+        self.assertRaises(ValidationError, validator._validate_dependencies)

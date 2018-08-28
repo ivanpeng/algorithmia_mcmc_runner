@@ -22,6 +22,7 @@ class SchemaValidator:
         # ValidationError is raised if it fails. We only reach here if it's successful
         # Now we validate the fields: are the fields present?
         # First validate if all field names are unique
+        supported_distribution_types = {"normal", "exponential", "poisson", "bernoulli"}
         field_names = [x["name"] for x in self.schema_obj["schema"]["fields"]]
         for field_name in field_names:
             if " " in field_name:
@@ -37,6 +38,9 @@ class SchemaValidator:
                 else:
                     # Need to remove it to prevent it from being called again.
                     field_name_set.remove(prior["name"])
+                # Now validate type
+                if prior["type"] not in supported_distribution_types:
+                    raise ValidationError("Prior distribution type can only be one of %s" % supported_distribution_types)
             # Validate fields in deterministic
             # Let's support super simple expressions for now. I would imagine we will need a tokenizer eventually
             # https://stackoverflow.com/questions/43389684/how-can-i-split-a-string-of-a-mathematical-expressions-in-python
