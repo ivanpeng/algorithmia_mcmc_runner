@@ -6,7 +6,7 @@ import pandas as pd
 import json
 import pymc3 as pm
 
-from exception import AlgorithmError
+from .exception import AlgorithmError
 
 """
 This python script will submit a PyMC3 MCMC job to Algorithmia and return the output. This assumes the schema is
