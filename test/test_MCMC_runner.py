@@ -1,4 +1,4 @@
-from src import MCMC_runner
+from src.schema_validator import SchemaValidator
 import unittest
 
 

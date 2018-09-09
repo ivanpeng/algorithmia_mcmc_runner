@@ -41,7 +41,7 @@
         ],
         "deterministic": {
           "name": "total_returns",
-          "formula": "1.2 * returns_stock_1 + returns_stock_2 + returns_bond_1 + returns_bond_2"
+          "formula": "0.1 * returns_stock_1 + 0.1 * returns_stock_2 + 5 * returns_bond_1 + 7 * returns_bond_2"
         }
       }
     ],

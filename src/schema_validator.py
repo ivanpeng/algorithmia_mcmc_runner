@@ -11,7 +11,7 @@ class SchemaValidator:
         """
         self.schema_obj = schema_obj
         if schema is None:
-            with open('src/schema.json', 'r') as f:
+            with open('schema.json', 'r') as f:
                 schema = json.load(f)
         self.schema = schema
 
@@ -19,10 +19,8 @@ class SchemaValidator:
         return jsonschema.validate(self.schema_obj, self.schema)
 
     def _validate_dependencies(self):
-        # ValidationError is raised if it fails. We only reach here if it's successful
-        # Now we validate the fields: are the fields present?
-        # First validate if all field names are unique
         supported_distribution_types = {"normal", "exponential", "poisson", "bernoulli"}
+        # First validate if all field names are unique
         field_names = [x["name"] for x in self.schema_obj["schema"]["fields"]]
         for field_name in field_names:
             if " " in field_name:
