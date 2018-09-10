@@ -55,7 +55,7 @@ def run_simulation(df):
 
 
 def write_dataframe_to_json(df, compression=True):
-    tempfile = "/tmp/" + uuid.uuid4() + ".tmp"
+    tempfile = "/tmp/" + str(uuid.uuid4()) + ".tmp"
     if compression == True:
         outstream = df.to_json(compression="gzip")
     else:
