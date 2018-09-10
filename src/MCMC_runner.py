@@ -92,4 +92,4 @@ def apply(input):
     output_file_uri = "data://ivanpeng/basketball/" + input["target_output"]
     tempfile = write_dataframe_to_json(trace_to_dataframe(trace), compression=True)
     client.file(output_file_uri).putFile(tempfile)
-    return pm.summary(trace)
+    return pm.summary(trace).to_json()
