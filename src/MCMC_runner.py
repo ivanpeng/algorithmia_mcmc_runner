@@ -53,7 +53,7 @@ def run_simulation(df):
     burned_trace = trace[burn_in:]
     # TODO: when we hook up google bigquery, we are going to write to two tables: a summary table, and a trace table
     # summary_df = pm.summary(burned_trace)
-    return trace_to_dataframe(burned_trace)
+    return burned_trace
 
 
 def write_dataframe_to_json(df, compression=True):
@@ -90,6 +90,6 @@ def apply(input):
     # For now, save trace to algorithmia data file, and return results of summary
     # TODO: Make this configurable from input
     output_file_uri = "data://ivanpeng/basketball/" + input["target_output"]
-    tempfile = write_dataframe_to_json(trace, compression=True)
+    tempfile = write_dataframe_to_json(trace_to_dataframe(trace), compression=True)
     client.file(output_file_uri).putFile(tempfile)
     return pm.summary(trace)
