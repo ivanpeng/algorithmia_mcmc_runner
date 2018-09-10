@@ -77,12 +77,14 @@ def apply(input):
         text = client.file(user_file).getString()
         data = json.loads(text)
     elif "data" in input:
-        # Data is sent in via post
+        # Data is sent in via post, in which case it's a vanilla object
         data = input["data"]
+        # TODO: Okay, this is dumb, but we'll get this working
+        text = json.dumps(data)
     else:
         raise AlgorithmError("Input data must be specified or file must be specified")
 
-    trace = run_simulation(pd.read_json(data))
+    trace = run_simulation(pd.read_json(text))
     # For now, save trace to algorithmia data file, and return results of summary
     # TODO: Make this configurable from input
     output_file_uri = "data://ivanpeng/basketball/" + input["target_output"]
