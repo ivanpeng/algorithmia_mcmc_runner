@@ -56,17 +56,6 @@ def run_simulation(df):
     return burned_trace
 
 
-def write_dataframe_to_json(df, compression=True):
-    tempfile = "/tmp/" + str(uuid.uuid4()) + ".tmp"
-    if compression == True:
-        outstream = df.to_json(compression="gzip")
-    else:
-        outstream = df.to_json()
-    with open(tempfile, 'w') as f:
-        f.write(outstream)
-    return tempfile
-
-
 # API calls will begin at the apply() method, with the request body passed as 'input'
 # For more details, see algorithmia.com/developers/algorithm-development/languages
 def apply(input):
@@ -77,19 +66,19 @@ def apply(input):
     if "user_file" in input and client.file(input["user_file"]).exists():
         user_file = input["user_file"]
         text = client.file(user_file).getString()
-        data = json.loads(text)
-    elif "data" in input:
+        df = pd.read_json(text)
+    elif "data" in input and "key" in input:
         # Data is sent in via post, in which case it's a vanilla object
-        data = input["data"]
-        # TODO: Okay, this is dumb, but we'll get this working
-        text = json.dumps(data)
+        df = pd.DataFrame.from_dict(input["data"])
+
     else:
         raise AlgorithmError("Input data must be specified or file must be specified")
 
-    trace = run_simulation(pd.read_json(text))
+    trace = run_simulation(df)
     # For now, save trace to algorithmia data file, and return results of summary
     # TODO: Make this configurable from input
-    output_file_uri = "data://ivanpeng/basketball/" + input["target_output"]
-    tempfile = write_dataframe_to_json(trace_to_dataframe(trace), compression=True)
-    client.file(output_file_uri).putFile(tempfile)
+    output_file_uri = "s3+fantasygm://fantasygm-trace-out/v1/" + input["target_output"]
+    trace_dataframe = trace_to_dataframe(trace)
+    trace_dataframe.to_parquet(input['target_output'], engine="pyarrow", compression="snappy")
+    client.file(output_file_uri).putFile(input['target_output'])
     return pm.summary(trace).to_json()
