@@ -2,7 +2,9 @@ import Algorithmia
 import pandas as pd
 
 import pymc3 as pm
+import json
 
+from functools import reduce
 from pymc3.backends.tracetab import trace_to_dataframe
 
 from .exception import AlgorithmError
@@ -55,6 +57,24 @@ def run_simulation(df):
     return burned_trace
 
 
+def check_element_in_set(elem, key_set):
+    return reduce((lambda x,y: x and y), [x in elem for x in key_set])
+
+
+def validate_data(json_data):
+    # Need to assert that the fields in data are adequate:
+    # 1. json_data is an array
+    # 2. has a set of {'pts', 'orb', 'drb', 'ast', 'stl', 'blk', 'tov'}
+    # 3. Those values are floats/integers
+    key_set = {'pts', 'orb', 'drb', 'ast', 'stl', 'blk', 'tov'}
+    if not isinstance(json_data, (list,)):
+        return False
+    for elem in json_data:
+        if not check_element_in_set(elem, key_set):
+            return False
+    return True
+
+
 # TODO: TEST, or at least make more modular for testing
 def parse_dataframe(input, client):
     if "target_output" not in input:
@@ -62,12 +82,15 @@ def parse_dataframe(input, client):
     if "user_file" in input and client.file(input["user_file"]).exists():
         user_file = input["user_file"]
         text = client.file(user_file).getString()
-        df = pd.read_json(text)
-    elif "data" in input and "key" in input:
+        data = json.loads(text)
+    elif "data" in input:
         # Data is sent in via post, in which case it's a vanilla object
-        df = pd.DataFrame.from_dict(input["data"])
+        data = input["data"]
     else:
         raise AlgorithmError("Input data must be specified or file must be specified")
+    if not validate_data(data):
+        raise AlgorithmError("Data has not been validated")
+    df = pd.DataFrame.from_dict(data)
     return df
 
 
