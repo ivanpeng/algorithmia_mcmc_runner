@@ -1,4 +1,4 @@
-from src import MCMC_runner
+
 import unittest
 
 

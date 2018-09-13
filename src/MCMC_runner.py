@@ -1,9 +1,6 @@
-import uuid
-
 import Algorithmia
 import pandas as pd
 
-import json
 import pymc3 as pm
 
 from pymc3.backends.tracetab import trace_to_dataframe
@@ -11,8 +8,10 @@ from pymc3.backends.tracetab import trace_to_dataframe
 from .exception import AlgorithmError
 
 """
-This python script will submit a PyMC3 MCMC job to Algorithmia and return the output. This assumes the schema is
-already correct. It will simply connect to the algorithm set up in Algorithmia and run the commands.
+The algorithm is responsible for running MCMC sampling simulations for fantasy sports stats. It is based off of a
+serverless application, Algorithmia to run. The process is kicked off with a post command to the algorithmia-hosted
+program, with inputs as a file location or a json for input. MCMC is sampled, and the sampled trace is converted to a
+dataframe and pushed to s3 (in compressed snappy parquet format), with intentions of pushing to Google BigQuery.
 """
 
 
@@ -56,13 +55,10 @@ def run_simulation(df):
     return burned_trace
 
 
-# API calls will begin at the apply() method, with the request body passed as 'input'
-# For more details, see algorithmia.com/developers/algorithm-development/languages
-def apply(input):
-    client = Algorithmia.client()
+# TODO: TEST, or at least make more modular for testing
+def parse_dataframe(input, client):
     if "target_output" not in input:
         raise AlgorithmError("Target file name must be specified")
-
     if "user_file" in input and client.file(input["user_file"]).exists():
         user_file = input["user_file"]
         text = client.file(user_file).getString()
@@ -70,15 +66,25 @@ def apply(input):
     elif "data" in input and "key" in input:
         # Data is sent in via post, in which case it's a vanilla object
         df = pd.DataFrame.from_dict(input["data"])
-
     else:
         raise AlgorithmError("Input data must be specified or file must be specified")
+    return df
 
+
+def write_output(trace, uri, filepath, client):
+    trace_dataframe = trace_to_dataframe(trace)
+    trace_dataframe.to_parquet(filepath, engine="pyarrow", compression="snappy")
+    client.file(uri).putFile(filepath)
+
+
+# API calls will begin at the apply() method, with the request body passed as 'input'
+# For more details, see algorithmia.com/developers/algorithm-development/languages
+def apply(input):
+    client = Algorithmia.client()
+    df = parse_dataframe(input, client)
     trace = run_simulation(df)
     # For now, save trace to algorithmia data file, and return results of summary
-    # TODO: Make this configurable from input
     output_file_uri = "s3+fantasygm://fantasygm-trace-out/v1/" + input["target_output"]
-    trace_dataframe = trace_to_dataframe(trace)
-    trace_dataframe.to_parquet(input['target_output'], engine="pyarrow", compression="snappy")
-    client.file(output_file_uri).putFile(input['target_output'])
+    # TODO: need a list of varnames for converting the multitrace to dataframe
+    write_output(trace, output_file_uri, input["target_output"], client)
     return pm.summary(trace).to_json()
