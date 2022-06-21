@@ -21,7 +21,7 @@ jupyter-client==5.2.3
 jupyter-core==4.4.0
 matplotlib==2.1.2
 mpmath==1.0.0
-numpy==1.15.0
+numpy==1.22.0
 pandas==0.23.4
 parso==0.3.1
 patsy==0.5.0
